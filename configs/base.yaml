@@ -1,0 +1,58 @@
+project:
+  run_name: "credit_shap_lime"
+  random_seed: 42
+
+paths:
+  raw_dir: "data/raw"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  artifacts_dir: "artifacts"
+
+data:
+  input_file: "cs-training.csv"
+  target_col: "SeriousDlqin2yrs"
+  test_size: 0.15
+  val_size: 0.15
+  id_columns: []
+
+cleaning:
+  age_zero_as_missing: true
+  delinquency_clip_values: [96, 98]
+  delinquency_clip_to: 12
+  sensitive_delinquency_median_replace: false
+
+models:
+  model_name: "xgboost"
+  class_weight_strategy: "balanced"
+  use_smote_in_cv: false
+  cv_folds: 5
+  calibrate: true
+
+xgboost:
+  n_estimators: 400
+  max_depth: 6
+  learning_rate: 0.05
+  subsample: 0.9
+  colsample_bytree: 0.9
+  reg_lambda: 1.0
+  random_state: 42
+  n_jobs: -1
+  tree_method: "hist"
+
+explain:
+  sample_size: 1000
+  top_k: 10
+  lime_num_features: 10
+  lime_num_samples: 1000
+  lime_kernel_width: 0.75
+  lime_feature_selection: "auto"
+  lime_discretize_continuous: true
+  lime_seeds: [11, 19, 37, 71, 97]
+
+stability:
+  perturbation_sigma: 0.01
+  perturbation_repeats: 3
+  bootstrap_samples: 200
+
+scalability:
+  sizes: [100, 300, 500, 1000]

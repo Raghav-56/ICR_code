@@ -1,0 +1,17 @@
+project:
+  run_name: "credit_shap_lime_high_compute"
+  random_seed: 42
+
+models:
+  use_smote_in_cv: true
+
+explain:
+  sample_size: 3000
+  lime_num_samples: 5000
+  lime_seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+stability:
+  bootstrap_samples: 1000
+
+scalability:
+  sizes: [500, 1000, 2500, 5000]
