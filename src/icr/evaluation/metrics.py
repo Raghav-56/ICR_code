@@ -8,6 +8,7 @@ from sklearn.metrics import (
     balanced_accuracy_score,
     brier_score_loss,
     f1_score,
+    precision_recall_curve,
     roc_auc_score,
 )
 
@@ -28,6 +29,19 @@ def predict_with_threshold(model: Any, x, threshold: float = 0.5):
     y_prob = model.predict_proba(x)[:, 1]
     y_pred = (y_prob >= threshold).astype(int)
     return y_pred, y_prob
+
+
+def select_threshold_by_f1(y_true, y_prob) -> float:
+    precision, recall, thresholds = precision_recall_curve(y_true, y_prob)
+    if len(thresholds) == 0:
+        return 0.5
+
+    # precision/recall has one extra element; align to threshold positions.
+    p = precision[:-1]
+    r = recall[:-1]
+    f1 = (2 * p * r) / np.clip(p + r, 1e-12, None)
+    best_idx = int(np.argmax(f1))
+    return float(thresholds[best_idx])
 
 
 

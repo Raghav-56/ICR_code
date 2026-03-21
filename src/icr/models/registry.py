@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import Any
 
+from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 
 from icr.config import PipelineConfig
 
-def build_model(cfg: PipelineConfig) -> Any:
-    name = cfg.models.model_name.lower()
+
+def build_model(cfg: PipelineConfig, model_name: str | None = None) -> Any:
+    name = (model_name or cfg.models.model_name).lower()
 
     if name == "logistic":
         return LogisticRegression(
@@ -32,6 +34,24 @@ def build_model(cfg: PipelineConfig) -> Any:
             n_jobs=-1,
             verbose=-1,
         )
+
+    if name == "catboost":
+        return CatBoostClassifier(
+            iterations=cfg.catboost.iterations,
+            depth=cfg.catboost.depth,
+            learning_rate=cfg.catboost.learning_rate,
+            l2_leaf_reg=cfg.catboost.l2_leaf_reg,
+            random_seed=cfg.catboost.random_seed,
+            verbose=cfg.catboost.verbose,
+            auto_class_weights=(
+                "Balanced"
+                if cfg.models.class_weight_strategy == "balanced"
+                else None
+            ),
+        )
+
+    if name != "xgboost":
+        raise ValueError(f"Unsupported model_name: {cfg.models.model_name}")
 
     return XGBClassifier(
         n_estimators=cfg.xgboost.n_estimators,

@@ -33,6 +33,7 @@ dev = [
 
 [project.scripts]
 icr = "icr.cli:app"
+icr-main = "main:app"
 
 [build-system]
 requires = ["hatchling"]

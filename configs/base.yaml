@@ -22,10 +22,14 @@ cleaning:
   sensitive_delinquency_median_replace: false
 
 models:
-  model_name: "xgboost"
+  model_name: "catboost"
+  candidate_models: ["logistic", "xgboost", "catboost"]
   class_weight_strategy: "balanced"
   use_smote_in_cv: false
+  compare_imbalance_strategies: true
   cv_folds: 5
+  tune_hyperparameters: true
+  tuning_iterations: 20
   calibrate: true
 
 xgboost:
@@ -39,20 +43,34 @@ xgboost:
   n_jobs: -1
   tree_method: "hist"
 
+catboost:
+  iterations: 600
+  depth: 6
+  learning_rate: 0.05
+  l2_leaf_reg: 3.0
+  random_seed: 42
+  verbose: false
+
 explain:
   sample_size: 1000
-  top_k: 10
+  use_full_test_for_explanations: true
+  top_k: 3
+  shap_kernel_background_size: 100
+  shap_kernel_use_kmeans: true
   lime_num_features: 10
   lime_num_samples: 1000
-  lime_kernel_width: 0.75
+  lime_num_samples_sweep: [500, 1000, 5000]
+  lime_kernel_width: "sqrt_features"
   lime_feature_selection: "auto"
   lime_discretize_continuous: true
-  lime_seeds: [11, 19, 37, 71, 97]
+  lime_seed_count: 50
+  lime_seeds: [11, 19, 37, 71, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349]
 
 stability:
   perturbation_sigma: 0.01
   perturbation_repeats: 3
-  bootstrap_samples: 200
+  bootstrap_samples: 1000
 
 scalability:
-  sizes: [100, 300, 500, 1000]
+  sizes: [1, 10, 50, 100, 300, 500, 1000, 2500, 5000, 10000, 22500]
+  repeats: 5

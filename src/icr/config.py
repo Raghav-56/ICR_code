@@ -37,10 +37,16 @@ class CleaningConfig(BaseModel):
 
 
 class ModelsConfig(BaseModel):
-    model_name: str = "xgboost"
+    model_name: str = "catboost"
+    candidate_models: list[str] = Field(
+        default_factory=lambda: ["logistic", "xgboost", "catboost"]
+    )
     class_weight_strategy: str = "balanced"
     use_smote_in_cv: bool = False
+    compare_imbalance_strategies: bool = True
     cv_folds: int = 5
+    tune_hyperparameters: bool = True
+    tuning_iterations: int = 20
     calibrate: bool = True
 
 
@@ -56,25 +62,95 @@ class XGBoostConfig(BaseModel):
     tree_method: str = "hist"
 
 
+class CatBoostConfig(BaseModel):
+    iterations: int = 600
+    depth: int = 6
+    learning_rate: float = 0.05
+    l2_leaf_reg: float = 3.0
+    random_seed: int = 42
+    verbose: bool = False
+
+
 class ExplainConfig(BaseModel):
     sample_size: int = 1000
-    top_k: int = 10
+    use_full_test_for_explanations: bool = True
+    top_k: int = 3
+    shap_kernel_background_size: int = 100
+    shap_kernel_use_kmeans: bool = True
     lime_num_features: int = 10
     lime_num_samples: int = 1000
-    lime_kernel_width: float = 0.75
+    lime_num_samples_sweep: list[int] = Field(default_factory=lambda: [500, 1000, 5000])
+    lime_kernel_width: float | str = "sqrt_features"
     lime_feature_selection: str = "auto"
     lime_discretize_continuous: bool = True
-    lime_seeds: list[int] = Field(default_factory=lambda: [11, 19, 37, 71, 97])
+    lime_seed_count: int = 50
+    lime_seeds: list[int] = Field(
+        default_factory=lambda: [
+            11,
+            19,
+            37,
+            71,
+            97,
+            101,
+            103,
+            107,
+            109,
+            113,
+            127,
+            131,
+            137,
+            139,
+            149,
+            151,
+            157,
+            163,
+            167,
+            173,
+            179,
+            181,
+            191,
+            193,
+            197,
+            199,
+            211,
+            223,
+            227,
+            229,
+            233,
+            239,
+            241,
+            251,
+            257,
+            263,
+            269,
+            271,
+            277,
+            281,
+            283,
+            293,
+            307,
+            311,
+            313,
+            317,
+            331,
+            337,
+            347,
+            349,
+        ]
+    )
 
 
 class StabilityConfig(BaseModel):
     perturbation_sigma: float = 0.01
     perturbation_repeats: int = 3
-    bootstrap_samples: int = 200
+    bootstrap_samples: int = 1000
 
 
 class ScalabilityConfig(BaseModel):
-    sizes: list[int] = Field(default_factory=lambda: [100, 300, 500, 1000])
+    sizes: list[int] = Field(
+        default_factory=lambda: [1, 10, 50, 100, 300, 500, 1000, 2500, 5000, 10000, 22500]
+    )
+    repeats: int = 5
 
 
 class PipelineConfig(BaseModel):
@@ -84,6 +160,7 @@ class PipelineConfig(BaseModel):
     cleaning: CleaningConfig = Field(default_factory=CleaningConfig)
     models: ModelsConfig = Field(default_factory=ModelsConfig)
     xgboost: XGBoostConfig = Field(default_factory=XGBoostConfig)
+    catboost: CatBoostConfig = Field(default_factory=CatBoostConfig)
     explain: ExplainConfig = Field(default_factory=ExplainConfig)
     stability: StabilityConfig = Field(default_factory=StabilityConfig)
     scalability: ScalabilityConfig = Field(default_factory=ScalabilityConfig)
