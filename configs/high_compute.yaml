@@ -2,6 +2,9 @@ project:
   run_name: "credit_shap_lime_high_compute"
   random_seed: 42
 
+kagglehub:
+  enabled: false
+
 models:
   use_smote_in_cv: true
   compare_imbalance_strategies: true

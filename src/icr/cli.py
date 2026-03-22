@@ -11,6 +11,7 @@ from sklearn.linear_model import LogisticRegression
 
 from icr.config import PipelineConfig, load_config
 from icr.data.clean import fit_cleaning, transform_cleaning
+from icr.data.kaggle_download import ensure_kaggle_competition_dataset
 from icr.data.load import load_raw_dataframe
 from icr.data.split import stratified_split
 from icr.data.validate import validate_dataframe
@@ -102,6 +103,7 @@ def _lime_seeds(cfg: PipelineConfig) -> list[int]:
 @app.command("prepare-data")
 def prepare_data(config: str = typer.Option("configs/base.yaml", help="Path to YAML config")) -> None:
     cfg = _load_cfg(config)
+    ensure_kaggle_competition_dataset(cfg)
 
     raw = load_raw_dataframe(cfg)
     validate_dataframe(raw, cfg)
@@ -130,6 +132,15 @@ def prepare_data(config: str = typer.Option("configs/base.yaml", help="Path to Y
         },
     )
     logger.info("Data preparation complete.")
+
+
+@app.command("download-dataset")
+def download_dataset_cmd(
+    config: str = typer.Option("configs/base.yaml", help="Path to YAML config"),
+) -> None:
+    cfg = _load_cfg(config)
+    downloaded = ensure_kaggle_competition_dataset(cfg, required=True)
+    logger.info("Dataset download complete: %s", downloaded)
 
 
 @app.command("train")

@@ -27,6 +27,14 @@ class DataConfig(BaseModel):
     id_columns: list[str] = Field(default_factory=list)
 
 
+class KaggleHubConfig(BaseModel):
+    enabled: bool = False
+    competition: str = "GiveMeSomeCredit"
+    competition_file: str = "cs-training.csv"
+    force_download: bool = False
+    overwrite_existing: bool = False
+
+
 class CleaningConfig(BaseModel):
     age_zero_as_missing: bool = True
     delinquency_clip_values: list[int] = Field(
@@ -157,6 +165,7 @@ class PipelineConfig(BaseModel):
     project: ProjectConfig = Field(default_factory=ProjectConfig)
     paths: PathsConfig = Field(default_factory=PathsConfig)
     data: DataConfig = Field(default_factory=DataConfig)
+    kagglehub: KaggleHubConfig = Field(default_factory=KaggleHubConfig)
     cleaning: CleaningConfig = Field(default_factory=CleaningConfig)
     models: ModelsConfig = Field(default_factory=ModelsConfig)
     xgboost: XGBoostConfig = Field(default_factory=XGBoostConfig)

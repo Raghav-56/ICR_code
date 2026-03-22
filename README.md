@@ -213,6 +213,7 @@ flowchart LR
 
 ```bash
 uv sync
+python main.py download-dataset --config configs/base.yaml
 python main.py run-paper-protocol --config configs/base.yaml
 python main.py export-paper-assets --config configs/base.yaml --paper-figures-dir ../figures
 ```
@@ -229,6 +230,13 @@ python main.py stability --config configs/base.yaml
 python main.py scalability --config configs/base.yaml
 python main.py report --config configs/base.yaml
 ```
+
+Optional automatic dataset download (via KaggleHub):
+
+- Set `kagglehub.enabled=true` in `configs/base.yaml`.
+- Keep `kagglehub.competition="GiveMeSomeCredit"`.
+- Run `python main.py prepare-data --config configs/base.yaml`.
+- The pipeline will call `kagglehub.competition_download("GiveMeSomeCredit")` and copy `cs-training.csv` into `data/raw/`.
 
 ## Paper parity checklist
 

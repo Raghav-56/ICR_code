@@ -47,6 +47,14 @@ def prepare_data(
     icr_cli.prepare_data(config)
 
 
+@app.command("download-dataset")
+def download_dataset(
+    config: str = typer.Option("configs/base.yaml", help="Path to YAML config."),
+) -> None:
+    """Download the configured Kaggle competition dataset into data/raw."""
+    icr_cli.download_dataset_cmd(config)
+
+
 @app.command("train")
 def train(
     config: str = typer.Option("configs/base.yaml", help="Path to YAML config."),
