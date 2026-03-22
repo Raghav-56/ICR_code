@@ -16,9 +16,9 @@ def build_model(cfg: PipelineConfig, model_name: str | None = None) -> Any:
     if name == "logistic":
         return LogisticRegression(
             class_weight=cfg.models.class_weight_strategy,
-            max_iter=2000,
+            max_iter=5000,
+            solver="liblinear",
             random_state=cfg.project.random_seed,
-            n_jobs=-1,
         )
 
     if name == "lightgbm":

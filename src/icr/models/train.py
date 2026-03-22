@@ -32,7 +32,7 @@ def _param_distributions(cfg: PipelineConfig, model_name: str | None = None) -> 
     if name == "logistic":
         return {
             "C": [0.01, 0.1, 1.0, 10.0],
-            "solver": ["lbfgs"],
+            "solver": ["liblinear"],
         }
     if name == "catboost":
         return {

@@ -523,7 +523,11 @@ def scalability_cmd(config: str = typer.Option("configs/base.yaml", help="Path t
     y_train = train_df[cfg.data.target_col]
     x_test = test_df.drop(columns=[cfg.data.target_col])
 
-    logistic = LogisticRegression(max_iter=2000, class_weight="balanced", n_jobs=-1)
+    logistic = LogisticRegression(
+        max_iter=5000,
+        solver="liblinear",
+        class_weight="balanced",
+    )
     logistic.fit(x_train, y_train)
 
     def _tree_or_model_shap(subset: pd.DataFrame):
